@@ -9,11 +9,20 @@ public class TourScheduler {
      */
     public static void main(String[] args) {
         // Create an instance of the TourScheduler object
-        TourScheduler ts = new TourScheduler();
+        String testData = args[0];
+
+        //System.out.println(testData);
+
+        TourScheduler ts = new TourScheduler(testData);
     }
 
-    public TourScheduler(){
+    public TourScheduler(String data){
         // Bulk of program goes here
-        System.out.println("Bulk of program");
+        System.out.println("Tour Guide Availability Scheduler\n");
+
+        //Guide Rick = new Guide("Rick");
+
+        //System.out.println(Rick.toString());
+        System.out.println(data);
     }
 }
