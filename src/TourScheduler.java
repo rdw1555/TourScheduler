@@ -26,8 +26,18 @@ public class TourScheduler {
         // Create a scanner for the file
         Scanner in = new Scanner(new File(filename));
 
-        // Skip past very first line
-        in.nextLine();
+        // Parse out the first line for labeling purposes
+        String firstLine = in.nextLine();
+
+        // Break up the data on commas to save for the labels of each entry
+        String[] labels = firstLine.split(",");
+
+        String[] weekLabels = new String[labels.length-3];
+
+        if (weekLabels.length >= 0) System.arraycopy(labels, 3, weekLabels, 0, weekLabels.length);
+
+        // Create a list of all of the tour Guides
+        List<Guide> tourGuides = new ArrayList();
 
         // Loop through file, parse based off of lines / commas
         while(in.hasNext()){
@@ -40,8 +50,14 @@ public class TourScheduler {
             // PARSE UP THE LINE BASED OFF OF COMMAS, CHECK FOR QUOTATIONS INDICATING THAT THE FOLLOWING IS A STRING LITERAL - NOT A SEPARATE PIECE OF DATA
             String[] almostParsed = tempLine.split(",");
 
+            // ArrayList to store the strings that make up a grouped one, needs to be stored locally to the line loop but globally to the almostParsed loop
+            List<String> grouping = new ArrayList<>();
+
             // boolean flag to check for quotations
             boolean flag = false;
+
+            // Create an ArrayList to store all of the Guide's information in
+            List<String> guideInfo = new ArrayList<>();
 
             for(int i = 0; i < almostParsed.length; i++){
                 // Look at the current string, check to see if there is a quotation mark in the first character or last character
@@ -52,34 +68,81 @@ public class TourScheduler {
                 // Pull out the current string
                 String tempEntry = almostParsed[i];
 
-                System.out.println("\n" + tempEntry);
-
                 // First, check if the flag is raised
                 if(flag){
                     // The flag is raised, so we need to check if it's the end yet
                     if(tempEntry.charAt(tempEntry.length()-1) == '\"'){
-                        System.out.println("Entry " + i + " ends a string group");
+                        // Ends a string group
+                        // Take out the quotation and add it to the grouping list
+                        grouping.add(almostParsed[i].substring(0,almostParsed[i].length()-1));
+
+                        // Concatenate all of grouping's contents into one string, and add that to guideInfo
+                        StringBuilder groupingConcat = new StringBuilder();
+                        for (String s : grouping) {
+                            groupingConcat.append(s);
+                        }
+                        guideInfo.add(groupingConcat.toString());
+
                         // Lower the flag
                         flag = false;
+
+                        // Finally, clear the information out of grouping to prepare it for more possible quotation-based strings
+                        grouping.clear();
                     }
                     else{
-                        System.out.println("Entry " + i + " is in the middle of a string grouping");
-                        // If so, just move on to the next iteration
+                        // Inside a string group
+                        // Add the word to the grouping list, along with a comma for readability (and potential further parsing)
+                        grouping.add((almostParsed[i] + ","));
                     }
                 }
                 else{
                     // Look at the first position
                     if(tempEntry.charAt(0) == '\"'){
-                        System.out.println("Entry " + i + " starts a string group");
+                        // Starts a string group
                         // Raise the flag
                         flag = true;
+
+                        // Take out the quotation and add it to the grouping list
+                        // Add a comma at the end to increase readability (and allow for further parsing if necessary)
+                        String fixedString = almostParsed[i].substring(1) + ",";
+                        grouping.add(fixedString);
                     }
                     else{
                         // If the flag isn't raised, and there is no quotation mark starting in the string, then the entry is normal
-                        System.out.println("Entry " + i + " is normal");
+                        // Since the word is normal, all that's left is to add it to guideInfo
+                        guideInfo.add(almostParsed[i]);
                     }
                 }
             }
+            // Now that we've parsed the proper information, clean it up
+            // Remove the first element in guideInfo as it is irrelevant
+            guideInfo.remove(0);
+
+            // Pass labels and guideInfo into a separate method to create an individual tour Guide for this information
+            Guide newGuide = createGuide(weekLabels, guideInfo);
+
+            // Add that Guide to the tourGuides list
+            tourGuides.add(newGuide);
         }
+
+        // Now that we're out of that loop, we should have all of the tour guide info in place
+    }
+
+    public Guide createGuide(String[] weekLabels, List<String> guideInfo){
+        // First, pull the guide availability out of guideInfo in order to convert it to a String[]
+        String[] availabilities = new String[guideInfo.size()-2];
+        for(int i = 0; i < availabilities.length; i++){
+            availabilities[i] = guideInfo.get(i+2);
+        }
+
+        // Pull out some more string constants for the Guide object to be made
+        String email = guideInfo.get(0);
+        String name = guideInfo.get(1);
+
+        // Create the Guide object
+        Guide tempGuide = new Guide(email, name, weekLabels, availabilities);
+
+        // return the created guide
+        return tempGuide;
     }
 }
