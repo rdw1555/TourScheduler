@@ -126,6 +126,7 @@ public class TourScheduler {
         }
 
         // Now that we're out of that loop, we should have all of the tour guide info in place
+        // Print out the toString of each to test
     }
 
     public Guide createGuide(String[] weekLabels, List<String> guideInfo){
@@ -135,14 +136,28 @@ public class TourScheduler {
             availabilities[i] = guideInfo.get(i+2);
         }
 
+        // Next, we have to go through and correct the input on the availabilities and prune out the times along with "Not Available"
+        for(int i = 0; i < availabilities.length; i++){
+            // Pull out all of the times per element by splitting on the comma
+            String[] times = availabilities[i].split(",");
+            // Check if there is more than one time listed
+            if(times.length > 1){
+                // Check if one of the times listed is "Not Available"
+                for(String s : times){
+                    if (s.contains("Not Available")) {
+                        // Prioritize "Not Available" by changing the availabilities entry to exclusively be "Not Available"
+                        availabilities[i] = "Not Available";
+                        break;
+                    }
+                }
+            }
+        }
+
         // Pull out some more string constants for the Guide object to be made
         String email = guideInfo.get(0);
         String name = guideInfo.get(1);
 
-        // Create the Guide object
-        Guide tempGuide = new Guide(email, name, weekLabels, availabilities);
-
-        // return the created guide
-        return tempGuide;
+        // Create and return the created guide
+        return new Guide(email, name, weekLabels, availabilities);
     }
 }
