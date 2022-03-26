@@ -127,6 +127,9 @@ public class TourScheduler {
 
         // Now that we're out of that loop, we should have all of the tour guide info in place
         // Print out the toString of each to test
+        for(Guide g : tourGuides){
+            System.out.println("\n" + g.toString());
+        }
     }
 
     public Guide createGuide(String[] weekLabels, List<String> guideInfo){

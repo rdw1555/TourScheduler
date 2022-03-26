@@ -47,8 +47,32 @@ public class Guide {
     public String getName(){ return name; }
 
     /**
+     * getLabels() - getter method for the week labels
+     * @return - labels of all of the weeks, regardless of availability or not
+     */
+    public String[] getLabels() { return weekLabels; }
+
+    /**
+     * getAvailability() - getter method for the tour guide's availability
+     * @return - all of the tour guide's availability
+     */
+    public String[] getAvailability() { return availabilities; }
+
+    /**
      * toString() - returns string representation of the Guide object
      * @return string representation of the Guide object
      */
-    public String toString(){ return "Name: " + name + "\nEmail: " + email; }
+    public String toString(){
+        StringBuilder result = new StringBuilder();
+        result.append("Name: ").append(name);
+        result.append("\nEmail: ").append(email);
+
+        result.append("\nDays and Availabilities:");
+
+        for(int i = 0; i < weekLabels.length; i++){
+            result.append("\n\t").append(weekLabels[i]).append(":\t").append(availabilities[i]);
+        }
+
+        return result.toString();
+    }
 }
