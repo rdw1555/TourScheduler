@@ -58,6 +58,25 @@ public class Guide {
      */
     public String[] getAvailability() { return availabilities; }
 
+    public boolean checkAvailable(String day){
+        boolean result = false;
+
+        // Find the index of the day you're looking for
+        int day_index = 0;
+        for(int i = 0; i < weekLabels.length; i++){
+            if(weekLabels[i].equals(day)){
+                day_index = i;
+            }
+        }
+
+        // Check the availability for that day, set result to true if they're available
+        if(!availabilities[day_index].contains("Not Available")){
+            result = true;
+        }
+
+        return result;
+    }
+
     /**
      * toString() - returns string representation of the Guide object
      * @return string representation of the Guide object
